@@ -1,0 +1,56 @@
+🐳 DOCKER OUTPUT (if used)
+▶️ Build Image:
+docker build -t javafx-lab-app .
+
+
+Output:
+
+[+] Building 16.7s (9/9) FINISHED
+ => [internal] load build definition from Dockerfile
+ => [1/5] FROM openjdk:17
+ => [2/5] WORKDIR /app
+ => [3/5] COPY javafx-lab.jar .
+ => [4/5] CMD ["java", "-jar", "javafx-lab.jar"]
+ => exporting to image
+ => naming to docker.io/yourname/javafx-lab-app
+
+▶️ Run Container:
+docker run -it javafx-lab-app
+
+
+Output:
+
+Running JavaFX App...
+Launching GUI...
+
+
+🪟 JavaFX window opens inside container (on headless system, use log output only).
+
+⚙️ GITHUB OUTPUT (PowerShell)
+git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/yourusername/javafx-lab.git
+git push -u origin main
+
+
+Output:
+
+Initialized empty Git repository in C:/javafx-lab/.git/
+[main (root-commit) 12a34b5] Initial commit
+To https://github.com/yourusername/javafx-lab.git
+ * [new branch]      main -> main
+
+🧰 JENKINS (Freestyle job output sample)
+Console Output:
+Started by user admin
+Building in workspace C:\Program Files\Jenkins\workspace\javafx-lab
+Cloning repository https://github.com/yourusername/javafx-lab.git
+ > git init C:\Program Files\Jenkins\workspace\javafx-lab # timeout=10
+ > git fetch --tags --progress https://github.com/yourusername/javafx-lab.git +refs/heads/*:refs/remotes/origin/*
+Checking out Revision a1b2c3 (main)
+[Build] javac -d out src\sample\*.java
+[Run] java -cp out sample.Main
+Build succeeded.
+Finished: SUCCESS
