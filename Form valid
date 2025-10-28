@@ -1,0 +1,49 @@
+import React, { useState } from "react";
+
+function App() {
+  const [weight, setWeight] = useState("");
+  const [height, setHeight] = useState("");
+  const [bmi, setBmi] = useState(null);
+
+  const calculateBMI = () => {
+    if (!weight || !height) return alert("Please enter both values");
+    const bmiValue = (weight / ((height / 100) ** 2)).toFixed(2);
+    setBmi(bmiValue);
+  };
+
+  return (
+    <div style={{ textAlign: "center", marginTop: "50px", fontFamily: "Arial" }}>
+      <h1>⚖️ BMI Calculator</h1>
+      <input
+        type="number"
+        placeholder="Weight (kg)"
+        value={weight}
+        onChange={(e) => setWeight(e.target.value)}
+        style={{ margin: "5px" }}
+      />
+      <input
+        type="number"
+        placeholder="Height (cm)"
+        value={height}
+        onChange={(e) => setHeight(e.target.value)}
+        style={{ margin: "5px" }}
+      />
+      <button onClick={calculateBMI}>Calculate</button>
+      {bmi && <h2>Your BMI: {bmi}</h2>}
+    </div>
+  );
+}
+
+export default App;
+Dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install --legacy-peer-deps
+COPY . .
+CMD ["npm", "start"]
+EXPOSE 3000
+Build and run:
+
+docker build -t bmi-calculator .
+docker run -p 3000:3000 bmi-calculator
