@@ -1,0 +1,180 @@
+1. BMI Calculator
+src/App.js
+import React, { useState } from "react";
+
+function App() {
+  const [weight, setWeight] = useState("");
+  const [height, setHeight] = useState("");
+  const [bmi, setBmi] = useState(null);
+
+  const calculateBMI = () => {
+    if (!weight || !height) return alert("Please enter both values");
+    const bmiValue = (weight / ((height / 100) ** 2)).toFixed(2);
+    setBmi(bmiValue);
+  };
+
+  return (
+    <div style={{ textAlign: "center", marginTop: "50px", fontFamily: "Arial" }}>
+      <h1>⚖️ BMI Calculator</h1>
+      <input
+        type="number"
+        placeholder="Weight (kg)"
+        value={weight}
+        onChange={(e) => setWeight(e.target.value)}
+        style={{ margin: "5px" }}
+      />
+      <input
+        type="number"
+        placeholder="Height (cm)"
+        value={height}
+        onChange={(e) => setHeight(e.target.value)}
+        style={{ margin: "5px" }}
+      />
+      <button onClick={calculateBMI}>Calculate</button>
+      {bmi && <h2>Your BMI: {bmi}</h2>}
+    </div>
+  );
+}
+
+export default App;
+Dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install --legacy-peer-deps
+COPY . .
+CMD ["npm", "start"]
+EXPOSE 3000
+Build and run:
+
+docker build -t bmi-calculator .
+docker run -p 3000:3000 bmi-calculator
+🧾 2. Simple CRUD Application (Local Storage)
+src/App.js
+import React, { useState, useEffect } from "react";
+
+function App() {
+  const [items, setItems] = useState(() => JSON.parse(localStorage.getItem("items")) || []);
+  const [text, setText] = useState("");
+
+  useEffect(() => {
+    localStorage.setItem("items", JSON.stringify(items));
+  }, [items]);
+
+  const addItem = () => {
+    if (!text.trim()) return;
+    setItems([...items, { id: Date.now(), text }]);
+    setText("");
+  };
+
+  const deleteItem = (id) => {
+    setItems(items.filter((item) => item.id !== id));
+  };
+
+  const updateItem = (id) => {
+    const newText = prompt("Edit item:");
+    if (newText) {
+      setItems(items.map((item) => (item.id === id ? { ...item, text: newText } : item)));
+    }
+  };
+
+  return (
+    <div style={{ padding: 20, fontFamily: "Arial" }}>
+      <h1>🗂️ Simple CRUD App</h1>
+      <input
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Enter item..."
+      />
+      <button onClick={addItem}>Add</button>
+      <ul>
+        {items.map((item) => (
+          <li key={item.id}>
+            {item.text}{" "}
+            <button onClick={() => updateItem(item.id)}>Edit</button>
+            <button onClick={() => deleteItem(item.id)}>Delete</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default App;
+Dockerfile
+(same as above)
+
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install --legacy-peer-deps
+COPY . .
+CMD ["npm", "start"]
+EXPOSE 3000
+🌐 3. Fetch Data from API
+src/App.js
+import React, { useEffect, useState } from "react";
+
+function App() {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetch("https://jsonplaceholder.typicode.com/users")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch");
+        return res.json();
+      })
+      .then((data) => {
+        setUsers(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <h3>Loading...</h3>;
+  if (error) return <h3 style={{ color: "red" }}>Error: {error}</h3>;
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h1>🌍 User Data</h1>
+      {users.map((u) => (
+        <div
+          key={u.id}
+          style={{
+            background: "#eee",
+            padding: "10px",
+            margin: "10px 0",
+            borderRadius: "6px",
+          }}
+        >
+          <h3>{u.name}</h3>
+          <p>{u.email}</p>
+          <p>{u.address.city}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default App;
+Dockerfile
+(same base setup)
+
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install --legacy-peer-deps
+COPY . .
+CMD ["npm", "start"]
+EXPOSE 3000
+🧱 How to Build and Run Any of Them
+From the project folder:
+
+docker build -t my-react-app .
+docker run -p 3000:3000 my-react-app
+Then open 👉 http://localhost:3000
